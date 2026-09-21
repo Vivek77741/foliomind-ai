@@ -578,72 +578,7 @@ def build_pdf():
         ]))
         story.append(Paragraph("<b>Figure 5:</b> FolioMind AI Brokerage Connect Modal launching the SnapTrade OAuth Portal.", caption_style))
 
-    story.append(Spacer(1, 8))
-    story.append(Paragraph("A. SnapTrade OAuth Apps vs Commercial Integration", h2_style))
-    story.append(Paragraph(
-        "SnapTrade has released a modern <b>OAuth 2.0 + OpenID Connect (OIDC)</b> integration model. "
-        "The table below contrasts the traditional Commercial API integration with the new OAuth App architecture:",
-        body_style
-    ))
 
-    oauth_comp_data = [
-        [Paragraph("Feature / Capability", table_header), Paragraph("Commercial Integration", table_header), Paragraph("SnapTrade OAuth App Flow", table_header)],
-        [
-            Paragraph("<b>User Lifecycle</b>", table_cell_bold),
-            Paragraph("App creates & owns SnapTrade user (<code>/registerUser</code>).", table_cell),
-            Paragraph("User signs in to existing SnapTrade Personal account.", table_cell)
-        ],
-        [
-            Paragraph("<b>Connection Sharing</b>", table_cell_bold),
-            Paragraph("Connection belongs exclusively to one app instance.", table_cell),
-            Paragraph("<b>Reusable:</b> User connects once in SnapTrade and grants access across apps.", table_cell)
-        ],
-        [
-            Paragraph("<b>Protocol & Auth</b>", table_cell_bold),
-            Paragraph("Static <code>clientId</code> + <code>consumerKey</code> headers with <code>userSecret</code>.", table_cell),
-            Paragraph("Standard <b>OAuth 2.0 + PKCE (S256)</b> with signed <code>id_token</code> (RS256).", table_cell)
-        ],
-        [
-            Paragraph("<b>API Requests</b>", table_cell_bold),
-            Paragraph("Custom headers on every call.", table_cell),
-            Paragraph("<code>Authorization: Bearer ACCESS_TOKEN</code> (no secret keys sent on wire).", table_cell)
-        ],
-        [
-            Paragraph("<b>Token Lifecycle</b>", table_cell_bold),
-            Paragraph("Static <code>userSecret</code> without fixed expiry.", table_cell),
-            Paragraph("10-hour access token (<code>36000s</code>) with <b>rotating refresh tokens</b>.", table_cell)
-        ],
-        [
-            Paragraph("<b>Webhook Payload</b>", table_cell_bold),
-            Paragraph("Standard event webhook.", table_cell),
-            Paragraph("Versioned <code>oauth_v1</code> payload with <code>oauthClientId</code> and <code>userId</code> UUID.", table_cell)
-        ]
-    ]
-    t_oauth = Table(oauth_comp_data, colWidths=[100, 216, 216])
-    t_oauth.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), c_primary),
-        ('GRID', (0,0), (-1,-1), 0.5, c_border),
-        ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('TOPPADDING', (0,0), (-1,-1), 4),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
-        ('LEFTPADDING', (0,0), (-1,-1), 6),
-        ('RIGHTPADDING', (0,0), (-1,-1), 6),
-        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, c_card_bg])
-    ]))
-    story.append(t_oauth)
-    story.append(Spacer(1, 10))
-
-    story.append(Paragraph("B. The 5-Step PKCE Authorization Workflow", h2_style))
-    story.append(Paragraph(
-        "<b>1. Generate PKCE & State:</b> The backend generates a high-entropy <code>state</code>, <code>nonce</code>, and <code>code_verifier</code>, "
-        "deriving the SHA-256 base64url challenge: <code>code_challenge = base64url(sha256(code_verifier))</code>.<br/>"
-        "<b>2. Authorize Redirect:</b> Browser redirects to <code>https://dashboard.snaptrade.com/oauth/authorize?response_type=code&scope=openid email read webhook</code>.<br/>"
-        "<b>3. User Consent:</b> The user authenticates and approves scopes (read-only access to portfolio accounts and event notifications).<br/>"
-        "<b>4. Token Exchange:</b> Backend receives <code>code</code> and exchanges it via <code>POST https://api.snaptrade.com/oauth/token/</code> "
-        "using HTTP Basic authentication (client secret stays confidential on backend).<br/>"
-        "<b>5. Bearer Execution:</b> Backend fetches accounts, positions, and balances using <code>Authorization: Bearer &lt;access_token&gt;</code>.",
-        body_style
-    ))
 
     # =========================================================================
     # SECTION 6: THE GROUNDED AI COPILOT (IMAGE 5)
