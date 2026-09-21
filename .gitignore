@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+**/node_modules/
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables & secrets
+.env
+**/.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+**/dist/
+dist-ssr/
+build/
+
+# Tunnel and scratch files
+tunnel.txt
+tunnel_url.txt
+*.log
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
