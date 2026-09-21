@@ -8,15 +8,17 @@ from reportlab.platypus import (
 )
 from reportlab.pdfgen import canvas
 
-# Image paths from user upload
+# Image paths from user uploads
 IMG_DIR = r"C:\Users\vivek\.gemini\antigravity-ide\brain\3fa5f170-06db-497f-96ee-bf2a03bc53ad\.user_uploaded"
 IMG_DASHBOARD_OVERVIEW = os.path.join(IMG_DIR, "media_1790004108778.png")
 IMG_PNL_WATERFALL = os.path.join(IMG_DIR, "media_1790004132761.png")
 IMG_ALLOCATION_HOLDINGS = os.path.join(IMG_DIR, "media_1790004154210.png")
 IMG_ACTIVITIES = os.path.join(IMG_DIR, "media_1790004168417.png")
 IMG_COPILOT_CHAT = os.path.join(IMG_DIR, "media_1790004215846.png")
+IMG_CONNECT_MODAL = os.path.join(IMG_DIR, "media_1790004601339.png")
 
 OUTPUT_PDF = r"c:\Users\vivek\OneDrive\Desktop\st\FolioMind_AI_Comprehensive_Documentation.pdf"
+ARTIFACT_PDF = r"C:\Users\vivek\.gemini\antigravity-ide\brain\3fa5f170-06db-497f-96ee-bf2a03bc53ad\FolioMind_AI_Comprehensive_Documentation.pdf"
 
 class NumberedCanvas(canvas.Canvas):
     def __init__(self, *args, **kwargs):
@@ -107,8 +109,8 @@ def build_pdf():
         'Heading1_Custom',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=18,
-        leading=22,
+        fontSize=17,
+        leading=21,
         textColor=c_dark,
         spaceBefore=14,
         spaceAfter=8,
@@ -119,8 +121,8 @@ def build_pdf():
         'Heading2_Custom',
         parent=styles['Normal'],
         fontName='Helvetica-Bold',
-        fontSize=13,
-        leading=17,
+        fontSize=12,
+        leading=16,
         textColor=c_secondary,
         spaceBefore=10,
         spaceAfter=6,
@@ -150,16 +152,6 @@ def build_pdf():
         fontSize=9,
         leading=13.5,
         textColor=colors.HexColor("#1e1b4b")
-    )
-
-    badge_style = ParagraphStyle(
-        'Badge_Text',
-        parent=styles['Normal'],
-        fontName='Helvetica-Bold',
-        fontSize=8.5,
-        leading=11,
-        textColor=colors.HexColor("#ffffff"),
-        alignment=1
     )
 
     table_header = ParagraphStyle(
@@ -213,7 +205,7 @@ def build_pdf():
     meta_data = [
         [
             Paragraph("<b>Product Version:</b> v1.0.0 Production", body_style),
-            Paragraph("<b>Integration:</b> SnapTrade REST & OAuth", body_style)
+            Paragraph("<b>Integration:</b> SnapTrade REST & OAuth 2.0", body_style)
         ],
         [
             Paragraph("<b>Live Web App:</b> <font color='#4f46e5'><u>https://foliomind-ai.vercel.app</u></font>", body_style),
@@ -555,22 +547,120 @@ def build_pdf():
     ))
 
     # =========================================================================
-    # SECTION 5: THE GROUNDED AI COPILOT (IMAGE 5)
+    # SECTION 5: SNAPTRADE OAUTH BROKERAGE CONNECTION (IMAGE 6)
     # =========================================================================
     story.append(PageBreak())
-    story.append(Paragraph("5. The Grounded AI Copilot: Zero-Hallucination Architecture", h1_style))
+    story.append(Paragraph("5. Brokerage Onboarding: SnapTrade OAuth 2.0 Integration", h1_style))
+    story.append(Paragraph(
+        "A cornerstone of FolioMind's institutional security is its brokerage connection model.",
+        body_style
+    ))
+
+    if os.path.exists(IMG_CONNECT_MODAL):
+        img_connect = Image(IMG_CONNECT_MODAL, width=235, height=180)
+        connect_desc = [
+            Paragraph("<b>Bank-Grade Brokerage Onboarding</b>", h2_style),
+            Paragraph(
+                "In <b>Figure 5</b>, the <code>ConnectModal</code> dialog guarantees three core security commitments:",
+                body_style
+            ),
+            Paragraph(
+                "• <b>50+ Brokerages Supported:</b> Direct API access to Alpaca, Interactive Brokers, Robinhood, Fidelity, Charles Schwab, and TD Ameritrade.<br/>"
+                "• <b>Read-Only Encrypted Pipeline:</b> FolioMind cannot execute unauthorized trades or withdraw funds.<br/>"
+                "• <b>Confidential Client Model:</b> Brokerage passwords are never visible to FolioMind servers. All consumer secrets stay securely on the backend.",
+                body_style
+            )
+        ]
+        story.append(Table([[img_connect, connect_desc]], colWidths=[245, 287], style=[
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('LEFTPADDING', (0,0), (-1,-1), 4),
+            ('RIGHTPADDING', (0,0), (-1,-1), 4),
+        ]))
+        story.append(Paragraph("<b>Figure 5:</b> FolioMind AI Brokerage Connect Modal launching the SnapTrade OAuth Portal.", caption_style))
+
+    story.append(Spacer(1, 8))
+    story.append(Paragraph("A. SnapTrade OAuth Apps vs Commercial Integration", h2_style))
+    story.append(Paragraph(
+        "SnapTrade has released a modern <b>OAuth 2.0 + OpenID Connect (OIDC)</b> integration model. "
+        "The table below contrasts the traditional Commercial API integration with the new OAuth App architecture:",
+        body_style
+    ))
+
+    oauth_comp_data = [
+        [Paragraph("Feature / Capability", table_header), Paragraph("Commercial Integration", table_header), Paragraph("SnapTrade OAuth App Flow", table_header)],
+        [
+            Paragraph("<b>User Lifecycle</b>", table_cell_bold),
+            Paragraph("App creates & owns SnapTrade user (<code>/registerUser</code>).", table_cell),
+            Paragraph("User signs in to existing SnapTrade Personal account.", table_cell)
+        ],
+        [
+            Paragraph("<b>Connection Sharing</b>", table_cell_bold),
+            Paragraph("Connection belongs exclusively to one app instance.", table_cell),
+            Paragraph("<b>Reusable:</b> User connects once in SnapTrade and grants access across apps.", table_cell)
+        ],
+        [
+            Paragraph("<b>Protocol & Auth</b>", table_cell_bold),
+            Paragraph("Static <code>clientId</code> + <code>consumerKey</code> headers with <code>userSecret</code>.", table_cell),
+            Paragraph("Standard <b>OAuth 2.0 + PKCE (S256)</b> with signed <code>id_token</code> (RS256).", table_cell)
+        ],
+        [
+            Paragraph("<b>API Requests</b>", table_cell_bold),
+            Paragraph("Custom headers on every call.", table_cell),
+            Paragraph("<code>Authorization: Bearer ACCESS_TOKEN</code> (no secret keys sent on wire).", table_cell)
+        ],
+        [
+            Paragraph("<b>Token Lifecycle</b>", table_cell_bold),
+            Paragraph("Static <code>userSecret</code> without fixed expiry.", table_cell),
+            Paragraph("10-hour access token (<code>36000s</code>) with <b>rotating refresh tokens</b>.", table_cell)
+        ],
+        [
+            Paragraph("<b>Webhook Payload</b>", table_cell_bold),
+            Paragraph("Standard event webhook.", table_cell),
+            Paragraph("Versioned <code>oauth_v1</code> payload with <code>oauthClientId</code> and <code>userId</code> UUID.", table_cell)
+        ]
+    ]
+    t_oauth = Table(oauth_comp_data, colWidths=[100, 216, 216])
+    t_oauth.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), c_primary),
+        ('GRID', (0,0), (-1,-1), 0.5, c_border),
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('TOPPADDING', (0,0), (-1,-1), 4),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+        ('LEFTPADDING', (0,0), (-1,-1), 6),
+        ('RIGHTPADDING', (0,0), (-1,-1), 6),
+        ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, c_card_bg])
+    ]))
+    story.append(t_oauth)
+    story.append(Spacer(1, 10))
+
+    story.append(Paragraph("B. The 5-Step PKCE Authorization Workflow", h2_style))
+    story.append(Paragraph(
+        "<b>1. Generate PKCE & State:</b> The backend generates a high-entropy <code>state</code>, <code>nonce</code>, and <code>code_verifier</code>, "
+        "deriving the SHA-256 base64url challenge: <code>code_challenge = base64url(sha256(code_verifier))</code>.<br/>"
+        "<b>2. Authorize Redirect:</b> Browser redirects to <code>https://dashboard.snaptrade.com/oauth/authorize?response_type=code&scope=openid email read webhook</code>.<br/>"
+        "<b>3. User Consent:</b> The user authenticates and approves scopes (read-only access to portfolio accounts and event notifications).<br/>"
+        "<b>4. Token Exchange:</b> Backend receives <code>code</code> and exchanges it via <code>POST https://api.snaptrade.com/oauth/token/</code> "
+        "using HTTP Basic authentication (client secret stays confidential on backend).<br/>"
+        "<b>5. Bearer Execution:</b> Backend fetches accounts, positions, and balances using <code>Authorization: Bearer &lt;access_token&gt;</code>.",
+        body_style
+    ))
+
+    # =========================================================================
+    # SECTION 6: THE GROUNDED AI COPILOT (IMAGE 5)
+    # =========================================================================
+    story.append(PageBreak())
+    story.append(Paragraph("6. The Grounded AI Copilot: Zero-Hallucination Architecture", h1_style))
     story.append(Paragraph(
         "FolioMind AI Copilot introduces a conversational intelligence layer grounded completely in verified financial records.",
         body_style
     ))
 
-    # Side-by-side layout: Image 5 on left, text/table on right
     if os.path.exists(IMG_COPILOT_CHAT):
         img_copilot = Image(IMG_COPILOT_CHAT, width=220, height=367)
         desc_text = [
             Paragraph("<b>Agentic Tool Execution in Action</b>", h2_style),
             Paragraph(
-                "In <b>Figure 5</b>, the user clicks the prompt chip:<br/>"
+                "In <b>Figure 6</b>, the user clicks the prompt chip:<br/>"
                 "<i>'Show my cash & liquid balance summary'</i>.",
                 body_style
             ),
@@ -600,13 +690,13 @@ def build_pdf():
             ('RIGHTPADDING', (0,0), (-1,-1), 4),
             ('TOPPADDING', (0,0), (-1,-1), 0),
         ]))
-        story.append(Paragraph("<b>Figure 5:</b> FolioMind AI Copilot Chat Drawer running in Grounded Mode with visible tool badges.", caption_style))
+        story.append(Paragraph("<b>Figure 6:</b> FolioMind AI Copilot Chat Drawer running in Grounded Mode with visible tool badges.", caption_style))
 
     # =========================================================================
-    # SECTION 6: SYSTEM ARCHITECTURE, SECURITY & DEPLOYMENT
+    # SECTION 7: SYSTEM ARCHITECTURE, SECURITY & DEPLOYMENT
     # =========================================================================
     story.append(PageBreak())
-    story.append(Paragraph("6. Security, Compliance & Cloud Infrastructure", h1_style))
+    story.append(Paragraph("7. Security, Compliance & Cloud Infrastructure", h1_style))
     story.append(Paragraph(
         "FolioMind AI adheres to institutional cybersecurity best practices for consumer financial technology.",
         body_style
@@ -654,7 +744,7 @@ def build_pdf():
     story.append(t_sec)
     story.append(Spacer(1, 14))
 
-    story.append(Paragraph("Conclusion & Value Summary", h1_style))
+    story.append(Paragraph("Conclusion & Strategic Value", h1_style))
     story.append(Paragraph(
         "FolioMind AI represents the next generation of personal wealth technology: combining the deep, multi-brokerage connectivity "
         "of <b>SnapTrade</b> with institutional quantitative analytics (HHI diversification, P&L waterfall contribution, concentration thresholds) "
@@ -666,6 +756,11 @@ def build_pdf():
     # Build Document
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"Successfully generated PDF: {OUTPUT_PDF}")
+
+    # Copy to artifact directory
+    import shutil
+    shutil.copyfile(OUTPUT_PDF, ARTIFACT_PDF)
+    print(f"Copied PDF to artifact directory: {ARTIFACT_PDF}")
 
 if __name__ == "__main__":
     build_pdf()
